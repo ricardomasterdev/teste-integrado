@@ -14,7 +14,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AuthService } from '../../core/services/auth.service';
 
-interface MenuItem { path: string; icon: string; label: string; }
+interface MenuItem { path: string; icon: string; label: string; external?: boolean; }
 
 @Component({
   selector: 'app-main-layout',
@@ -44,6 +44,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   readonly sistemaMenu: MenuItem[] = [
     { path: '/app/usuarios', icon: 'group',   label: 'Usuários' },
     { path: '/app/logs',     icon: 'history', label: 'Log de Acessos' },
+    { path: '/app/swagger',  icon: 'api',     label: 'API Swagger' },
   ];
 
   readonly now = signal(new Date());

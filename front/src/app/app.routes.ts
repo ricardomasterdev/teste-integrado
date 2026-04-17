@@ -32,6 +32,10 @@ export const routes: Routes = [
       {
         path: 'logs',
         loadComponent: () => import('./features/sistema/logs/logs-list.component').then(m => m.LogsListComponent)
+      },
+      {
+        path: 'swagger',
+        loadComponent: () => import('./features/sistema/swagger/swagger.component').then(m => m.SwaggerComponent)
       }
     ]
   },

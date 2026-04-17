@@ -39,6 +39,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> {})
+            // Permite embed do Swagger dentro do próprio SPA (mesma origem via IIS)
+            .headers(h -> h.frameOptions(f -> f.sameOrigin()))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
