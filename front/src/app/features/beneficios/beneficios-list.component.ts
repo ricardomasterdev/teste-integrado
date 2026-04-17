@@ -19,6 +19,7 @@ import { Beneficio } from '../../core/models/models';
 import { PageHeaderComponent } from '../../core/components/page-header.component';
 import { BeneficioDialogComponent } from './beneficio-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog.component';
+import { DetailsDialogComponent } from '../../core/components/details-dialog.component';
 
 @Component({
   selector: 'app-beneficios-list',
@@ -109,5 +110,35 @@ export class BeneficiosListComponent implements AfterViewInit {
   openTransfer() {
     this.dialog.open(TransferDialogComponent, { width: '560px', data: this.data.data })
       .afterClosed().subscribe(ok => { if (ok) this.load(); });
+  }
+
+  /** Abre a transferência com a conta de origem pré-selecionada. */
+  openTransferFor(b: Beneficio) {
+    this.dialog.open(TransferDialogComponent, {
+      width: '560px',
+      data: { beneficios: this.data.data, fromId: b.id }
+    }).afterClosed().subscribe(ok => { if (ok) this.load(); });
+  }
+
+  openDetails(b: Beneficio) {
+    this.dialog.open(DetailsDialogComponent, {
+      width: '520px',
+      data: {
+        title: b.nome,
+        subtitle: 'Detalhes do benefício',
+        icon: 'card_giftcard',
+        fields: [
+          { label: 'ID',         value: b.id,         type: 'mono' },
+          { label: 'Nome',       value: b.nome },
+          { label: 'Descrição',  value: b.descricao },
+          { label: 'Valor',      value: b.valor,      type: 'currency' },
+          { label: 'Status',     value: b.ativo ? 'Ativo' : 'Inativo',
+                                 type: b.ativo ? 'chip-ok' : 'chip-err' },
+          { label: 'Versão',     value: b.version,    type: 'mono' },
+          { label: 'Criado em',  value: b.createdAt,  type: 'datetime' },
+          { label: 'Atualizado', value: b.updatedAt,  type: 'datetime' }
+        ]
+      }
+    });
   }
 }

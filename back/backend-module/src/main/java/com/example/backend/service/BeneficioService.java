@@ -40,10 +40,14 @@ public class BeneficioService {
 
     private final BeneficioRepository repo;
     private final BeneficioTransferenciaRepository transfRepo;
+    private final TransferenciaAuditor auditor;
 
-    public BeneficioService(BeneficioRepository repo, BeneficioTransferenciaRepository transfRepo) {
+    public BeneficioService(BeneficioRepository repo,
+                            BeneficioTransferenciaRepository transfRepo,
+                            TransferenciaAuditor auditor) {
         this.repo = repo;
         this.transfRepo = transfRepo;
+        this.auditor = auditor;
     }
 
     // ------------------------- CRUD -------------------------
@@ -109,17 +113,19 @@ public class BeneficioService {
             rollbackFor = Exception.class
     )
     public void transfer(TransferRequest req) {
-        validarParametros(req);
-
-        Long fromId = req.fromId();
-        Long toId   = req.toId();
-        BigDecimal amount = req.amount();
-
-        // Ordem determinística para evitar deadlock
-        Long firstId  = fromId < toId ? fromId : toId;
-        Long secondId = fromId < toId ? toId   : fromId;
-
         try {
+            // Validação de parâmetros (mesma conta, valor inválido, ids nulos)
+            // fica DENTRO do try para garantir auditoria mesmo nesses casos.
+            validarParametros(req);
+
+            Long fromId = req.fromId();
+            Long toId   = req.toId();
+            BigDecimal amount = req.amount();
+
+            // Ordem determinística para evitar deadlock
+            Long firstId  = fromId < toId ? fromId : toId;
+            Long secondId = fromId < toId ? toId   : fromId;
+
             Beneficio first  = repo.findByIdForUpdate(firstId)
                     .orElseThrow(() -> notFound(firstId));
             Beneficio second = repo.findByIdForUpdate(secondId)
@@ -137,16 +143,21 @@ public class BeneficioService {
             repo.save(to);
             repo.flush();
 
-            auditar(req, BeneficioTransferencia.Status.SUCCESS, "OK");
+            auditor.registrarSucesso(req, "Transferência concluída");
             log.info("Transferência {} -> {} valor={} concluída", fromId, toId, amount);
         } catch (BusinessException ex) {
-            auditarFalha(req, mapStatus(ex.getCode()), ex.getMessage());
+            auditor.registrarFalha(req, mapStatus(ex.getCode()), ex.getMessage());
             throw ex;
         } catch (ObjectOptimisticLockingFailureException | CannotAcquireLockException ex) {
-            auditarFalha(req, BeneficioTransferencia.Status.FAILED_LOCK,
+            auditor.registrarFalha(req, BeneficioTransferencia.Status.FAILED_LOCK,
                     "Conflito de concorrência: " + ex.getMostSpecificCause().getMessage());
             throw new BusinessException(HttpStatus.CONFLICT, "CONCURRENCY_CONFLICT",
                     "Conflito de concorrência; tente novamente.");
+        } catch (RuntimeException ex) {
+            // Qualquer erro inesperado também é registrado para auditoria completa.
+            auditor.registrarFalha(req, BeneficioTransferencia.Status.FAILED,
+                    "Erro inesperado: " + ex.getMessage());
+            throw ex;
         }
     }
 
@@ -193,29 +204,4 @@ public class BeneficioService {
                 "NOT_FOUND", "Benefício id=" + id + " não encontrado.");
     }
 
-    private void auditar(TransferRequest r, BeneficioTransferencia.Status s, String msg) {
-        BeneficioTransferencia t = new BeneficioTransferencia();
-        t.setBeneficioOrigemId(r.fromId());
-        t.setBeneficioDestinoId(r.toId());
-        t.setValor(r.amount());
-        t.setUsuario(currentUser());
-        t.setStatus(s);
-        t.setMensagem(msg);
-        transfRepo.save(t);
-    }
-
-    /** Auditoria em transação própria para sobreviver ao rollback do negócio. */
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void auditarFalha(TransferRequest r, BeneficioTransferencia.Status s, String msg) {
-        auditar(r, s, msg);
-    }
-
-    private String currentUser() {
-        try {
-            var auth = SecurityContextHolder.getContext().getAuthentication();
-            return auth != null ? auth.getName() : "anonymous";
-        } catch (Exception e) {
-            return "anonymous";
-        }
-    }
 }

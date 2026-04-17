@@ -89,8 +89,13 @@ export class TransferDialogComponent implements OnInit {
     amount: [0, [Validators.required, Validators.min(0.01)]]
   });
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: Beneficio[]) {
-    this.beneficios = data ?? [];
+  constructor(@Inject(MAT_DIALOG_DATA) public data: Beneficio[] | { beneficios?: Beneficio[]; fromId?: number }) {
+    if (Array.isArray(data)) {
+      this.beneficios = data ?? [];
+    } else if (data) {
+      this.beneficios = data.beneficios ?? [];
+      if (data.fromId != null) this.form.patchValue({ fromId: data.fromId });
+    }
   }
 
   ngOnInit() {

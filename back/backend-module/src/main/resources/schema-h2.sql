@@ -22,8 +22,8 @@ CREATE TABLE IF NOT EXISTS app_user (
 
 CREATE TABLE IF NOT EXISTS beneficio_transferencia (
     id                   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    beneficio_origem_id  BIGINT NOT NULL,
-    beneficio_destino_id BIGINT NOT NULL,
+    beneficio_origem_id  BIGINT,
+    beneficio_destino_id BIGINT,
     valor                DECIMAL(15,2) NOT NULL,
     usuario              VARCHAR(100),
     status               VARCHAR(30) NOT NULL,

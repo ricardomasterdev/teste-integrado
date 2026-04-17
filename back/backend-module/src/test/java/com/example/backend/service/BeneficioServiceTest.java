@@ -20,13 +20,15 @@ class BeneficioServiceTest {
 
     private BeneficioRepository repo;
     private BeneficioTransferenciaRepository transfRepo;
+    private TransferenciaAuditor auditor;
     private BeneficioService service;
 
     @BeforeEach
     void setup() {
         repo = mock(BeneficioRepository.class);
         transfRepo = mock(BeneficioTransferenciaRepository.class);
-        service = new BeneficioService(repo, transfRepo);
+        auditor = mock(TransferenciaAuditor.class);
+        service = new BeneficioService(repo, transfRepo, auditor);
     }
 
     private Beneficio b(Long id, BigDecimal v, boolean ativo) {

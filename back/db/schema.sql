@@ -34,13 +34,15 @@ CREATE TABLE IF NOT EXISTS app_user (
 CREATE INDEX IF NOT EXISTS idx_app_user_username ON app_user(username);
 
 -- Auditoria de transferências (para rastrear operações críticas do EJB)
+-- Auditoria: colunas origem/destino nullable para registrar também tentativas
+-- com dados inválidos (ids ausentes, valor nulo) — a auditoria precisa ser completa.
 CREATE TABLE IF NOT EXISTS beneficio_transferencia (
     id             BIGSERIAL PRIMARY KEY,
-    beneficio_origem_id  BIGINT NOT NULL REFERENCES beneficio(id),
-    beneficio_destino_id BIGINT NOT NULL REFERENCES beneficio(id),
+    beneficio_origem_id  BIGINT,
+    beneficio_destino_id BIGINT,
     valor          NUMERIC(15,2) NOT NULL,
     usuario        VARCHAR(100),
-    status         VARCHAR(30) NOT NULL,      -- SUCCESS, FAILED_INSUFFICIENT, FAILED_LOCK, FAILED
+    status         VARCHAR(30) NOT NULL,      -- SUCCESS, FAILED_INSUFFICIENT, FAILED_LOCK, FAILED, FAILED_VALIDATION
     mensagem       VARCHAR(500),
     created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

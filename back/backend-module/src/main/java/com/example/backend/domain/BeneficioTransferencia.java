@@ -14,10 +14,10 @@ public class BeneficioTransferencia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "beneficio_origem_id", nullable = false)
+    @Column(name = "beneficio_origem_id")
     private Long beneficioOrigemId;
 
-    @Column(name = "beneficio_destino_id", nullable = false)
+    @Column(name = "beneficio_destino_id")
     private Long beneficioDestinoId;
 
     @Column(nullable = false, precision = 15, scale = 2)

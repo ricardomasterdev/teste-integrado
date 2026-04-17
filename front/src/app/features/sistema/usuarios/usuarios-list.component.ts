@@ -17,6 +17,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { AppUser } from '../../../core/models/models';
 import { PageHeaderComponent } from '../../../core/components/page-header.component';
 import { UsuarioDialogComponent } from './usuario-dialog.component';
+import { DetailsDialogComponent } from '../../../core/components/details-dialog.component';
 
 @Component({
   selector: 'app-usuarios-list',
@@ -83,6 +84,26 @@ export class UsuariosListComponent implements AfterViewInit {
   openForm(u?: AppUser) {
     this.dialog.open(UsuarioDialogComponent, { width: '520px', data: u })
       .afterClosed().subscribe(saved => { if (saved) this.load(); });
+  }
+
+  openDetails(u: AppUser) {
+    this.dialog.open(DetailsDialogComponent, {
+      width: '520px',
+      data: {
+        title: u.nome,
+        subtitle: 'Detalhes do usuário',
+        icon: u.role === 'ADMIN' ? 'shield' : 'person',
+        fields: [
+          { label: 'ID',        value: u.id,       type: 'mono' },
+          { label: 'Username',  value: u.username, type: 'mono' },
+          { label: 'Nome',      value: u.nome },
+          { label: 'Perfil',    value: u.role === 'ADMIN' ? 'Administrador' : 'Usuário' },
+          { label: 'Status',    value: u.ativo ? 'Ativo' : 'Inativo',
+                                type: u.ativo ? 'chip-ok' : 'chip-err' },
+          { label: 'Criado em', value: u.createdAt, type: 'datetime' }
+        ]
+      }
+    });
   }
 
   delete(u: AppUser) {

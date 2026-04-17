@@ -10,6 +10,7 @@ import ptBr from '@angular/common/locales/pt';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { loaderInterceptor } from './core/interceptors/loader.interceptor';
 import { PaginatorIntlPtBr } from './core/services/paginator-intl-pt-br';
 
 registerLocaleData(ptBr);
@@ -17,7 +18,7 @@ registerLocaleData(ptBr);
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([loaderInterceptor, authInterceptor])),
     provideAnimations(),
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },

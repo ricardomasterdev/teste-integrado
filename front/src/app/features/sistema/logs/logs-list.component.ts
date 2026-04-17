@@ -10,9 +10,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject } from 'rxjs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { LoginLogService } from '../../../core/services/login-log.service';
 import { LoginLog } from '../../../core/models/models';
 import { PageHeaderComponent } from '../../../core/components/page-header.component';
+import { DetailsDialogComponent } from '../../../core/components/details-dialog.component';
 
 @Component({
   selector: 'app-logs-list',
@@ -21,15 +24,17 @@ import { PageHeaderComponent } from '../../../core/components/page-header.compon
     CommonModule, FormsModule,
     MatTableModule, MatPaginatorModule, MatIconModule, MatProgressBarModule,
     MatFormFieldModule, MatInputModule, MatSelectModule, MatTooltipModule,
+    MatDialogModule, MatButtonModule,
     PageHeaderComponent
   ],
   templateUrl: './logs-list.component.html',
   styleUrl: './logs-list.component.scss'
 })
 export class LogsListComponent implements OnInit {
-  private svc = inject(LoginLogService);
+  private svc    = inject(LoginLogService);
+  private dialog = inject(MatDialog);
 
-  displayed = ['id', 'usuario', 'ip', 'userAgent', 'status', 'mensagem', 'createdAt'];
+  displayed = ['id', 'usuario', 'ip', 'userAgent', 'status', 'mensagem', 'createdAt', 'acoes'];
   rows = signal<LoginLog[]>([]);
   total = signal(0);
   loading = signal(false);
@@ -84,5 +89,28 @@ export class LogsListComponent implements OnInit {
       ua.includes('iPhone')   ? 'iOS'    :
       ua.includes('Linux')    ? 'Linux'  : '';
     return os ? `${browser} · ${os}` : browser;
+  }
+
+  openDetails(l: LoginLog) {
+    this.dialog.open(DetailsDialogComponent, {
+      width: '560px',
+      data: {
+        title: 'Acesso #' + l.id,
+        subtitle: l.sucesso ? 'Login realizado com sucesso' : 'Tentativa de login mal sucedida',
+        icon: l.sucesso ? 'login' : 'gpp_bad',
+        fields: [
+          { label: 'ID',             value: l.id,       type: 'mono' },
+          { label: 'Username',       value: l.username, type: 'mono' },
+          { label: 'Nome',           value: l.nome },
+          { label: 'IP',             value: l.ip,       type: 'mono' },
+          { label: 'Dispositivo',    value: this.shortUA(l.userAgent) },
+          { label: 'User-Agent',     value: l.userAgent, type: 'multiline' },
+          { label: 'Status',         value: l.sucesso ? 'Sucesso' : 'Falha',
+                                     type: l.sucesso ? 'chip-ok' : 'chip-err' },
+          { label: 'Mensagem',       value: l.mensagem },
+          { label: 'Data / Hora',    value: l.createdAt, type: 'datetime' }
+        ]
+      }
+    });
   }
 }
