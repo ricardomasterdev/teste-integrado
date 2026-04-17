@@ -52,3 +52,38 @@ export interface ApiError {
   path: string;
   details?: string[];
 }
+
+export interface AppUser {
+  id?: number;
+  username: string;
+  nome: string;
+  role: 'ADMIN' | 'USER';
+  ativo?: boolean;
+  createdAt?: string;
+}
+
+export interface AppUserCreateRequest {
+  username: string;
+  password: string;
+  nome: string;
+  role: 'ADMIN' | 'USER';
+  ativo?: boolean;
+}
+
+export interface AppUserUpdateRequest {
+  nome: string;
+  role: 'ADMIN' | 'USER';
+  ativo?: boolean;
+  password?: string;
+}
+
+export interface LoginLog {
+  id: number;
+  username: string;
+  nome?: string;
+  ip?: string;
+  userAgent?: string;
+  sucesso: boolean;
+  mensagem?: string;
+  createdAt: string;
+}

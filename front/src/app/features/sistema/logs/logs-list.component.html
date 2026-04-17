@@ -1,0 +1,95 @@
+<section class="logs">
+  <app-page-header title="Log de Acessos" subtitle="Auditoria de todas as tentativas de autenticação"></app-page-header>
+
+  <div class="ti-card">
+    <div class="table-toolbar">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+        <mat-label>Buscar por usuário</mat-label>
+        <input matInput [(ngModel)]="filterUser" (ngModelChange)="onFilterChange()">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="filter-status">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="filterStatus" (selectionChange)="onFilterChange()">
+          <mat-option value="">Todos</mat-option>
+          <mat-option value="true">Sucesso</mat-option>
+          <mat-option value="false">Falha</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <span class="text-muted">{{ total() }} registros</span>
+    </div>
+
+    @if (loading()) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+    <table mat-table [dataSource]="rows()" class="full-width">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>#</th>
+        <td mat-cell *matCellDef="let l">{{ l.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef>Usuário</th>
+        <td mat-cell *matCellDef="let l">
+          <div class="acct">
+            <span class="acct-name">{{ l.nome || '—' }}</span>
+            <small class="acct-id">{{ l.username }}</small>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ip">
+        <th mat-header-cell *matHeaderCellDef>IP</th>
+        <td mat-cell *matCellDef="let l" class="mono">{{ l.ip || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="userAgent">
+        <th mat-header-cell *matHeaderCellDef>Dispositivo</th>
+        <td mat-cell *matCellDef="let l" [matTooltip]="l.userAgent" matTooltipPosition="above">
+          {{ shortUA(l.userAgent) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let l">
+          <span class="status-chip" [class.status-ok]="l.sucesso" [class.status-err]="!l.sucesso">
+            <mat-icon>{{ l.sucesso ? 'check_circle' : 'error' }}</mat-icon>
+            {{ l.sucesso ? 'Sucesso' : 'Falha' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="mensagem">
+        <th mat-header-cell *matHeaderCellDef>Mensagem</th>
+        <td mat-cell *matCellDef="let l" class="text-muted">{{ l.mensagem }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Data / Hora</th>
+        <td mat-cell *matCellDef="let l">{{ l.createdAt | date:'dd/MM/yyyy HH:mm:ss':'':'pt-BR' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayed"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayed;"></tr>
+
+      <tr *matNoDataRow>
+        <td class="no-data" [attr.colspan]="displayed.length">
+          Nenhum registro de acesso encontrado.
+        </td>
+      </tr>
+    </table>
+
+    <div class="paginator-wrapper">
+      <mat-paginator
+        [length]="total()"
+        [pageSize]="size"
+        [pageIndex]="page"
+        [pageSizeOptions]="[10,20,50,100]"
+        (page)="onPage($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+</section>

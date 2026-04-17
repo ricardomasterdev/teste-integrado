@@ -46,9 +46,10 @@
       <ng-container matColumnDef="ativo">
         <th mat-header-cell *matHeaderCellDef>Status</th>
         <td mat-cell *matCellDef="let b">
-          <mat-chip [color]="b.ativo ? 'primary' : 'warn'" selected>
+          <span class="status-chip" [class.status-ok]="b.ativo" [class.status-muted]="!b.ativo">
+            <mat-icon>{{ b.ativo ? 'check_circle' : 'block' }}</mat-icon>
             {{ b.ativo ? 'Ativo' : 'Inativo' }}
-          </mat-chip>
+          </span>
         </td>
       </ng-container>
 

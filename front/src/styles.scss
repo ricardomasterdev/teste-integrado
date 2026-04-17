@@ -102,6 +102,51 @@ mat-paginator {
   .acct-id   { font-family: 'Roboto Mono', monospace; font-size: 0.72rem; color: var(--ti-muted); }
 }
 
+/* ========= Status chip padronizado em todo o sistema ========= */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &.status-ok {
+    background: #dcfce7;
+    color: #166534;
+    mat-icon { color: #16a34a; }
+  }
+  &.status-err {
+    background: #fee2e2;
+    color: #991b1b;
+    mat-icon { color: #dc2626; }
+  }
+  &.status-warn {
+    background: #fef3c7;
+    color: #92400e;
+    mat-icon { color: #f59e0b; }
+  }
+  &.status-info {
+    background: #dbeafe;
+    color: #1e40af;
+    mat-icon { color: #2563eb; }
+  }
+  &.status-muted {
+    background: #f3f4f6;
+    color: #4b5563;
+    mat-icon { color: #6b7280; }
+  }
+}
+
 /* ========= Tabela responsiva — scroll horizontal quando apertar ========= */
 .ti-card {
   overflow-x: auto;

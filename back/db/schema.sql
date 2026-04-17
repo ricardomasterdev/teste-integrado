@@ -48,6 +48,21 @@ CREATE TABLE IF NOT EXISTS beneficio_transferencia (
 CREATE INDEX IF NOT EXISTS idx_transf_origem  ON beneficio_transferencia(beneficio_origem_id);
 CREATE INDEX IF NOT EXISTS idx_transf_destino ON beneficio_transferencia(beneficio_destino_id);
 
+-- Log de acessos: registra cada tentativa de autenticação (sucesso/falha)
+CREATE TABLE IF NOT EXISTS login_log (
+    id          BIGSERIAL PRIMARY KEY,
+    username    VARCHAR(100) NOT NULL,
+    nome        VARCHAR(150),
+    ip          VARCHAR(64),
+    user_agent  VARCHAR(500),
+    sucesso     BOOLEAN NOT NULL,
+    mensagem    VARCHAR(255),
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_login_log_username  ON login_log(username);
+CREATE INDEX IF NOT EXISTS idx_login_log_createdat ON login_log(created_at DESC);
+
 -- Trigger para updated_at
 CREATE OR REPLACE FUNCTION touch_updated_at() RETURNS TRIGGER AS $$
 BEGIN

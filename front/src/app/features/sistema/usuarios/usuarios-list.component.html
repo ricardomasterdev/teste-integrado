@@ -1,0 +1,95 @@
+<section class="usuarios">
+  <app-page-header title="Usuários" subtitle="Gerenciamento de usuários do sistema">
+    <button mat-raised-button color="primary" (click)="openForm()">
+      <mat-icon>person_add</mat-icon> Novo usuário
+    </button>
+  </app-page-header>
+
+  <div class="ti-card">
+    <div class="table-toolbar">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search">
+        <mat-label>Buscar por username ou nome</mat-label>
+        <input matInput [ngModel]="filter" (ngModelChange)="onFilterChange($event)">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <span class="text-muted">{{ total() }} registros</span>
+    </div>
+
+    @if (loading()) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+    <table mat-table [dataSource]="data" matSort class="full-width">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+        <td mat-cell *matCellDef="let u">{{ u.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuário</th>
+        <td mat-cell *matCellDef="let u" class="mono">{{ u.username }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
+        <td mat-cell *matCellDef="let u">{{ u.nome }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Perfil</th>
+        <td mat-cell *matCellDef="let u">
+          <span class="status-chip" [class.status-info]="u.role === 'ADMIN'"
+                                    [class.status-muted]="u.role !== 'ADMIN'">
+            <mat-icon>{{ u.role === 'ADMIN' ? 'shield' : 'person' }}</mat-icon>
+            {{ u.role === 'ADMIN' ? 'Administrador' : 'Usuário' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="ativo">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let u">
+          <span class="status-chip" [class.status-ok]="u.ativo" [class.status-muted]="!u.ativo">
+            <mat-icon>{{ u.ativo ? 'check_circle' : 'block' }}</mat-icon>
+            {{ u.ativo ? 'Ativo' : 'Inativo' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef>Criado em</th>
+        <td mat-cell *matCellDef="let u">{{ u.createdAt | date:'short':'':'pt-BR' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef class="right">Ações</th>
+        <td mat-cell *matCellDef="let u" class="right">
+          <button mat-icon-button (click)="openForm(u)" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="delete(u)" matTooltip="Remover">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayed"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayed;"></tr>
+
+      <tr *matNoDataRow>
+        <td class="no-data" [attr.colspan]="displayed.length">
+          Nenhum usuário encontrado.
+        </td>
+      </tr>
+    </table>
+
+    <div class="paginator-wrapper">
+      <mat-paginator
+        [length]="total()"
+        [pageSize]="size"
+        [pageIndex]="page"
+        [pageSizeOptions]="[5,10,20,50]"
+        (page)="onPage($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+</section>

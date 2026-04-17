@@ -30,3 +30,14 @@ CREATE TABLE IF NOT EXISTS beneficio_transferencia (
     mensagem             VARCHAR(500),
     created_at           TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS login_log (
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    username    VARCHAR(100) NOT NULL,
+    nome        VARCHAR(150),
+    ip          VARCHAR(64),
+    user_agent  VARCHAR(500),
+    sucesso     BOOLEAN NOT NULL,
+    mensagem    VARCHAR(255),
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

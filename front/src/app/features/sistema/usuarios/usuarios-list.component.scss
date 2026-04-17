@@ -1,0 +1,9 @@
+.search { min-width: 280px; }
+
+table {
+  width: 100%;
+  th.right, td.right { text-align: right; }
+  .mono { font-family: 'Roboto Mono', monospace; font-size: 0.9rem; }
+}
+
+.no-data { text-align: center; padding: 24px; color: var(--ti-muted); }

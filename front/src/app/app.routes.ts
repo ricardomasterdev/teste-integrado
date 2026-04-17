@@ -24,6 +24,14 @@ export const routes: Routes = [
       {
         path: 'transferencias',
         loadComponent: () => import('./features/transferencias/transferencias-list.component').then(m => m.TransferenciasListComponent)
+      },
+      {
+        path: 'usuarios',
+        loadComponent: () => import('./features/sistema/usuarios/usuarios-list.component').then(m => m.UsuariosListComponent)
+      },
+      {
+        path: 'logs',
+        loadComponent: () => import('./features/sistema/logs/logs-list.component').then(m => m.LogsListComponent)
       }
     ]
   },

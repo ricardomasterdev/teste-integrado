@@ -8,8 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { AuthService } from '../../core/services/auth.service';
+
+interface MenuItem { path: string; icon: string; label: string; }
+interface MenuSection { title?: string; items: MenuItem[]; }
 
 @Component({
   selector: 'app-main-layout',
@@ -17,7 +21,7 @@ import { AuthService } from '../../core/services/auth.service';
   imports: [
     CommonModule, RouterLink, RouterLinkActive, RouterOutlet,
     MatToolbarModule, MatSidenavModule, MatListModule,
-    MatIconModule, MatButtonModule, MatMenuModule, MatTooltipModule
+    MatIconModule, MatButtonModule, MatMenuModule, MatTooltipModule, MatDividerModule
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
@@ -28,10 +32,22 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
-  readonly menu = [
-    { path: '/app/dashboard',      icon: 'dashboard',       label: 'Painel' },
-    { path: '/app/beneficios',     icon: 'card_giftcard',   label: 'Benefícios' },
-    { path: '/app/transferencias', icon: 'compare_arrows',  label: 'Transferências' },
+  /** Menu agrupado em seções — Sistema separado dos demais. */
+  readonly sections: MenuSection[] = [
+    {
+      items: [
+        { path: '/app/dashboard',      icon: 'dashboard',      label: 'Painel' },
+        { path: '/app/beneficios',     icon: 'card_giftcard',  label: 'Benefícios' },
+        { path: '/app/transferencias', icon: 'compare_arrows', label: 'Transferências' },
+      ]
+    },
+    {
+      title: 'Sistema',
+      items: [
+        { path: '/app/usuarios', icon: 'group',   label: 'Usuários' },
+        { path: '/app/logs',     icon: 'history', label: 'Log de Acessos' },
+      ]
+    }
   ];
 
   readonly now = signal(new Date());

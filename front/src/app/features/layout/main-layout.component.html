@@ -12,19 +12,30 @@
       </div>
     </div>
 
-    <mat-nav-list class="nav-list">
-      @for (item of menu; track item.path) {
-        <a mat-list-item
-           [routerLink]="item.path"
-           routerLinkActive="active"
-           (click)="onNavItemClick()"
-           [matTooltip]="item.label"
-           matTooltipPosition="right">
-          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-          <span matListItemTitle>{{ item.label }}</span>
-        </a>
+    <div class="nav-sections">
+      @for (section of sections; track $index) {
+        @if (section.title) {
+          <div class="section-label">
+            <span class="section-line"></span>
+            <span class="section-title">{{ section.title }}</span>
+            <span class="section-line"></span>
+          </div>
+        }
+        <mat-nav-list class="nav-list">
+          @for (item of section.items; track item.path) {
+            <a mat-list-item
+               [routerLink]="item.path"
+               routerLinkActive="active"
+               (click)="onNavItemClick()"
+               [matTooltip]="item.label"
+               matTooltipPosition="right">
+              <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+              <span matListItemTitle>{{ item.label }}</span>
+            </a>
+          }
+        </mat-nav-list>
       }
-    </mat-nav-list>
+    </div>
 
     <div class="sidenav-footer">
       <button mat-list-item class="logout-btn" (click)="logout()" matTooltip="Sair do sistema" matTooltipPosition="right">
@@ -51,7 +62,6 @@
 
       <span class="spacer"></span>
 
-      <!-- Card Data/Hora (escondido em mobile estreito) -->
       <div class="header-card datetime-card">
         <mat-icon>schedule</mat-icon>
         <div class="card-body">
@@ -60,7 +70,6 @@
         </div>
       </div>
 
-      <!-- Card Usuário -->
       <div class="header-card user-card" [matMenuTriggerFor]="userMenu">
         <div class="avatar">{{ userInitials() }}</div>
         <div class="card-body user-body">

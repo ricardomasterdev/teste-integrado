@@ -42,7 +42,22 @@ export class TransferenciasListComponent implements OnInit {
 
   onPage(e: PageEvent) { this.page = e.pageIndex; this.size = e.pageSize; this.load(); }
 
-  chipColor(status: string): 'primary' | 'warn' | 'accent' {
+  chipColor(status: string): 'primary' | 'warn' {
     return status === 'SUCCESS' ? 'primary' : 'warn';
+  }
+
+  statusLabel(status: string): string {
+    switch (status) {
+      case 'SUCCESS':              return 'Sucesso';
+      case 'FAILED_INSUFFICIENT':  return 'Saldo insuficiente';
+      case 'FAILED_LOCK':          return 'Conflito de concorrência';
+      case 'FAILED_VALIDATION':    return 'Validação';
+      case 'FAILED':               return 'Falha';
+      default:                     return status;
+    }
+  }
+
+  statusIcon(status: string): string {
+    return status === 'SUCCESS' ? 'check_circle' : 'error';
   }
 }

@@ -1,0 +1,9 @@
+.search        { min-width: 240px; }
+.filter-status { min-width: 140px; }
+
+table {
+  width: 100%;
+  .mono { font-family: 'Roboto Mono', monospace; font-size: 0.9rem; }
+}
+
+.no-data { text-align: center; padding: 24px; color: var(--ti-muted); }
