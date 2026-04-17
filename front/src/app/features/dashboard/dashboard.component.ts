@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+// registro das icones + modulos usados
+
 import { BeneficioService } from '../../core/services/beneficio.service';
 import { Beneficio, BeneficioTransferencia } from '../../core/models/models';
 

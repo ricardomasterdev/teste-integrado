@@ -50,9 +50,41 @@
 .transf-row {
   display: grid;
   grid-template-columns: 1fr auto auto;
-  gap: 12px; align-items: center;
-  padding: 8px 0; border-bottom: 1px dashed var(--ti-border);
+  gap: 14px; align-items: center;
+  padding: 10px 0; border-bottom: 1px dashed var(--ti-border);
   &:last-child { border-bottom: none; }
-  .flow { font-family: monospace; font-weight: 500; }
-  .value { font-weight: 500; }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+
+    .acct {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+      min-width: 0;
+      .acct-name {
+        font-weight: 500;
+        color: var(--ti-text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px;
+      }
+      .acct-id {
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.72rem;
+        color: var(--ti-muted);
+      }
+    }
+    .arrow {
+      color: var(--ti-primary);
+      font-size: 18px;
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+    }
+  }
+  .value { font-weight: 500; font-variant-numeric: tabular-nums; }
 }

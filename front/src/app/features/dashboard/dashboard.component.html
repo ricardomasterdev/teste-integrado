@@ -68,9 +68,17 @@
       }
       @for (t of ultimasTransf(); track t.id) {
         <div class="transf-row">
-          <span class="flow">
-            #{{ t.beneficioOrigemId }} → #{{ t.beneficioDestinoId }}
-          </span>
+          <div class="flow">
+            <span class="acct">
+              <span class="acct-name">{{ t.beneficioOrigemNome || '—' }}</span>
+              <small class="acct-id">#{{ t.beneficioOrigemId }}</small>
+            </span>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+            <span class="acct">
+              <span class="acct-name">{{ t.beneficioDestinoNome || '—' }}</span>
+              <small class="acct-id">#{{ t.beneficioDestinoId }}</small>
+            </span>
+          </div>
           <span class="value" [class.text-success]="t.status === 'SUCCESS'"
                               [class.text-danger]="t.status !== 'SUCCESS'">
             {{ t.valor | currency:'BRL' }}
