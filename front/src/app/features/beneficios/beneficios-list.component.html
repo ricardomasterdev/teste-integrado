@@ -1,18 +1,12 @@
 <section class="beneficios">
-  <header class="page-header">
-    <div>
-      <h2>Benefícios</h2>
-      <p class="text-muted">Gestão de benefícios — CRUD e transferências</p>
-    </div>
-    <div class="actions">
-      <button mat-stroked-button color="primary" (click)="openTransfer()">
-        <mat-icon>compare_arrows</mat-icon> Transferir
-      </button>
-      <button mat-raised-button color="primary" (click)="openForm()">
-        <mat-icon>add</mat-icon> Novo benefício
-      </button>
-    </div>
-  </header>
+  <app-page-header title="Benefícios" subtitle="Gestão de benefícios — CRUD e transferências">
+    <button mat-stroked-button color="primary" (click)="openTransfer()">
+      <mat-icon>compare_arrows</mat-icon> Transferir
+    </button>
+    <button mat-raised-button color="primary" (click)="openForm()">
+      <mat-icon>add</mat-icon> Novo benefício
+    </button>
+  </app-page-header>
 
   <div class="ti-card">
     <div class="table-toolbar">

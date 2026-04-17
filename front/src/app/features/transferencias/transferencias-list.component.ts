@@ -7,13 +7,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { BeneficioService } from '../../core/services/beneficio.service';
 import { BeneficioTransferencia } from '../../core/models/models';
+import { PageHeaderComponent } from '../../core/components/page-header.component';
 
 @Component({
   selector: 'app-transferencias-list',
   standalone: true,
   imports: [
     CommonModule, MatTableModule, MatPaginatorModule,
-    MatChipsModule, MatIconModule, MatProgressBarModule
+    MatChipsModule, MatIconModule, MatProgressBarModule,
+    PageHeaderComponent
   ],
   templateUrl: './transferencias-list.component.html',
   styleUrl: './transferencias-list.component.scss'

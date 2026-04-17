@@ -11,7 +11,6 @@
   display: flex;
   flex-direction: column;
 
-  /* Forca texto branco em todos os componentes Material dentro do sidenav */
   ::ng-deep .mdc-list-item,
   ::ng-deep .mdc-list-item__primary-text,
   ::ng-deep .mat-mdc-list-item,
@@ -67,8 +66,9 @@
 
   .sidenav-footer {
     margin-top: auto;
-    padding: 16px 14px 20px;
+    padding: 24px 14px 24px;
     border-top: 1px solid rgba(255,255,255,0.18);
+    background: rgba(0,0,0,0.14);
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -89,7 +89,6 @@
       font-weight: 500;
       font-family: inherit;
       text-align: left;
-      letter-spacing: 0.3px;
       transition: background .2s, border-color .2s, transform .1s;
 
       mat-icon {
@@ -109,7 +108,6 @@
       font-size: 0.68rem;
       text-align: center;
       letter-spacing: 0.6px;
-      padding-top: 4px;
     }
   }
 }
@@ -118,11 +116,14 @@
 .topbar {
   display: flex;
   align-items: center;
-  height: 72px;
-  padding: 0 16px;
+  min-height: 72px;
+  padding: 0 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   background: linear-gradient(90deg, #3949ab 0%, #303f9f 100%) !important;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: nowrap;
+
+  .menu-btn { color: #fff; }
 
   .topbar-title {
     display: flex;
@@ -131,8 +132,12 @@
     font-size: 1rem;
     font-weight: 500;
     letter-spacing: 0.2px;
+    min-width: 0;
+    overflow: hidden;
 
-    mat-icon { color: #ffca28; }
+    .brand-icon { color: #ffca28; flex-shrink: 0; }
+    .title-full  { display: inline; }
+    .title-short { display: none; }
   }
 
   .spacer { flex: 1; }
@@ -156,18 +161,24 @@
     color: #ffca28;
     font-size: 22px;
     width: 22px; height: 22px;
+    flex-shrink: 0;
   }
 
   .card-body {
     display: flex;
     flex-direction: column;
     line-height: 1.15;
+    min-width: 0;
 
     .card-primary {
       font-size: 0.82rem;
       font-weight: 500;
       color: #fff;
       text-transform: capitalize;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 180px;
     }
     .card-secondary {
       font-size: 0.72rem;
@@ -212,11 +223,13 @@
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.4px;
+    flex-shrink: 0;
   }
   .expand {
     color: rgba(255,255,255,0.80);
     font-size: 18px;
     width: 18px; height: 18px;
+    flex-shrink: 0;
   }
 }
 
@@ -236,4 +249,43 @@
   padding: 24px;
   min-height: calc(100vh - 72px);
   background: var(--ti-bg);
+}
+
+/* ======================= RESPONSIVO ======================= */
+
+/* Tablet */
+@media (max-width: 960px) {
+  .datetime-card { display: none; }
+  .topbar-title { font-size: 0.95rem; }
+  .user-card .card-body .card-primary { max-width: 120px; }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .topbar {
+    min-height: 60px;
+    padding: 0 8px;
+    gap: 6px;
+  }
+  .topbar .topbar-title .title-full  { display: none; }
+  .topbar .topbar-title .title-short { display: inline; font-weight: 700; letter-spacing: 1px; }
+
+  .header-card {
+    padding: 4px 8px;
+    min-height: 40px;
+    gap: 8px;
+  }
+
+  /* Em mobile escondemos o card-body do usuario — so o avatar basta */
+  .user-card {
+    .card-body { display: none; }
+    .expand { display: none; }
+  }
+
+  .page {
+    padding: 12px;
+    min-height: calc(100vh - 60px);
+  }
+
+  .sidenav { width: 240px; }
 }

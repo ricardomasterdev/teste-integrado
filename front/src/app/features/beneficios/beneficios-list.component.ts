@@ -16,6 +16,7 @@ import { debounceTime, Subject } from 'rxjs';
 import { BeneficioService } from '../../core/services/beneficio.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { Beneficio } from '../../core/models/models';
+import { PageHeaderComponent } from '../../core/components/page-header.component';
 import { BeneficioDialogComponent } from './beneficio-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog.component';
 
@@ -26,7 +27,8 @@ import { TransferDialogComponent } from './transfer-dialog.component';
     CommonModule, FormsModule,
     MatTableModule, MatPaginatorModule, MatSortModule,
     MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule,
-    MatDialogModule, MatProgressBarModule, MatChipsModule, MatTooltipModule
+    MatDialogModule, MatProgressBarModule, MatChipsModule, MatTooltipModule,
+    PageHeaderComponent
   ],
   templateUrl: './beneficios-list.component.html',
   styleUrl: './beneficios-list.component.scss'

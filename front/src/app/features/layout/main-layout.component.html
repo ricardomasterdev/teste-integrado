@@ -1,5 +1,9 @@
-<mat-sidenav-container class="layout" autosize>
-  <mat-sidenav mode="side" opened class="sidenav">
+<mat-sidenav-container class="layout" [autosize]="!isHandset()">
+  <mat-sidenav #sidenav
+               [mode]="isHandset() ? 'over' : 'side'"
+               [opened]="!isHandset()"
+               [fixedInViewport]="isHandset()"
+               class="sidenav">
     <div class="brand">
       <mat-icon>account_balance</mat-icon>
       <div class="brand-text">
@@ -13,6 +17,7 @@
         <a mat-list-item
            [routerLink]="item.path"
            routerLinkActive="active"
+           (click)="onNavItemClick()"
            [matTooltip]="item.label"
            matTooltipPosition="right">
           <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
@@ -32,13 +37,21 @@
 
   <mat-sidenav-content>
     <mat-toolbar color="primary" class="topbar">
+      @if (isHandset()) {
+        <button mat-icon-button class="menu-btn" (click)="toggleSidenav()" aria-label="Abrir menu">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+
       <span class="topbar-title">
-        <mat-icon>account_balance</mat-icon>
-        SGB — Sistema de Gestão de Benefícios
+        <mat-icon class="brand-icon">account_balance</mat-icon>
+        <span class="title-full">SGB — Sistema de Gestão de Benefícios</span>
+        <span class="title-short">SGB</span>
       </span>
+
       <span class="spacer"></span>
 
-      <!-- Card Data/Hora -->
+      <!-- Card Data/Hora (escondido em mobile estreito) -->
       <div class="header-card datetime-card">
         <mat-icon>schedule</mat-icon>
         <div class="card-body">
@@ -50,7 +63,7 @@
       <!-- Card Usuário -->
       <div class="header-card user-card" [matMenuTriggerFor]="userMenu">
         <div class="avatar">{{ userInitials() }}</div>
-        <div class="card-body">
+        <div class="card-body user-body">
           <span class="card-primary">{{ auth.user()?.nome }}</span>
           <span class="card-secondary">
             <mat-icon class="role-ico">shield</mat-icon>

@@ -7,10 +7,19 @@
   flex-wrap: wrap;
 
   h2 { margin: 0 0 4px; color: var(--ti-primary-dark); }
-  .actions { display: flex; gap: 12px; }
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
 }
 
 .search { min-width: 280px; }
+
+@media (max-width: 640px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    .actions { flex-wrap: wrap; button { flex: 1 1 auto; min-width: 140px; } }
+  }
+  .search { width: 100%; min-width: 0; }
+}
 
 table {
   width: 100%;
