@@ -353,6 +353,41 @@ cd front && npm test
 
 ---
 
+## 📑 Paginação server-side padronizada
+
+A paginação é **server-side** em **todos** os endpoints de listagem, com contrato único em todo o sistema. Essa é uma decisão deliberada baseada em alguns anos de dev de sistemas corporativos — tem impacto direto em custo de rede, consumo de memória do cliente e estabilidade quando a base de dados cresce.
+
+### Backend — contrato unificado
+
+- Todos os endpoints de listagem retornam `org.springframework.data.domain.Page<T>` do Spring Data. O payload inclui `content`, `totalElements`, `totalPages`, `number`, `size`, `first`, `last`, `empty`, `sort`.
+- Os repositórios expõem buscas paginadas nativamente (`JpaRepository<T, ID>` + `Pageable`). O banco limita o conjunto no `SELECT ... LIMIT ? OFFSET ?` e o `COUNT` é delegado para o próprio Postgres (uso correto dos índices em `id`, `nome` e `ativo`).
+- Parâmetros padronizados via query string seguindo o protocolo Spring Data:
+  - `page=<int>` — índice 0-based da página (default 0)
+  - `size=<int>` — tamanho da página (default 10 na API, 20 no histórico)
+  - `sort=<campo>,<asc|desc>` — ordenação, aceitando múltiplos campos (`sort=valor,desc&sort=nome,asc`)
+- Filtros livres (como `nome=`) são aplicados **antes** da paginação para que `totalElements` reflita o resultado filtrado, não o universo.
+- Valores padrão seguros via `@PageableDefault(size = 20)` nos controllers, impedindo dump acidental da tabela.
+
+### Frontend — um único contrato em toda a SPA
+
+- `src/app/core/models/pagination.ts` centraliza o contrato:
+  - `PageResponse<T>` espelhando o payload do Spring Data.
+  - `PageRequest { page, size, sort, filters }` como entrada uniforme para qualquer listagem.
+  - `buildPageParams(req)` — helper que monta `HttpParams` no formato exato esperado pelo backend (`page`, `size`, `sort=campo,direcao`) e aplica filtros adicionais.
+- Todos os services (`BeneficioService.list`, `.transferencias`) usam esse helper — nenhuma URL de listagem é montada manualmente no codebase.
+- `MatPaginator` é internacionalizado para pt-BR via `PaginatorIntlPtBr`, garantindo que **todas** as tabelas tenham rótulos coerentes (“Itens por página:”, “Próxima página”, “X – Y de N”).
+- Eventos de paginação do Material (`PageEvent`) são traduzidos diretamente para `PageRequest`, e o `load()` refaz a chamada ao backend — sem "paginação de bolso" em memória.
+- A mesma estratégia se aplica a busca por nome: o debounce do input envia `filters: { nome: <valor> }` ao backend e renderiza o resultado server-side; o front nunca tenta filtrar a página localmente.
+
+### Por que isso importa
+
+- **Escala**: uma tabela com dezenas de milhares de benefícios não quebra o cliente. Sempre trafegam apenas `size` registros + metadados.
+- **Consistência**: se um segundo dispositivo inclui/remove registros entre páginas, o usuário vê o `totalElements` atualizado na próxima requisição — não um contador desatualizado em memória.
+- **Auditabilidade**: com o `sort` indo ao banco, quem resolver um incidente consegue reproduzir exatamente a ordem que o usuário viu no frontend.
+- **Previsibilidade**: ter *um* contrato e *um* helper de montagem elimina a bug-prone combinação de paginadores client-side e parâmetros custom em cada tela.
+
+---
+
 ## 🤖 CI/CD
 
 `.github/workflows/ci.yml` roda em todo push/PR nas branches `main`/`develop`:

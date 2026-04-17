@@ -80,13 +80,15 @@
       </tr>
     </table>
 
-    <mat-paginator
-      [length]="total()"
-      [pageSize]="size"
-      [pageIndex]="page"
-      [pageSizeOptions]="[5,10,20,50]"
-      (page)="onPage($event)"
-      showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-wrapper">
+      <mat-paginator
+        [length]="total()"
+        [pageSize]="size"
+        [pageIndex]="page"
+        [pageSizeOptions]="[5,10,20,50]"
+        (page)="onPage($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
 </section>

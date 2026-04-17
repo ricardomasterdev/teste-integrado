@@ -1,7 +1,7 @@
 server:
   port: ${SERVER_PORT:8090}
   servlet:
-    context-path: /teste-integrado/api
+    context-path: /teste-integrado
   forward-headers-strategy: framework
   compression:
     enabled: true

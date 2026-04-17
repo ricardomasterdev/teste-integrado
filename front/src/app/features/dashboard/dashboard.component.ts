@@ -25,7 +25,7 @@ export class DashboardComponent implements OnInit {
   topBeneficios   = signal<Beneficio[]>([]);
 
   ngOnInit() {
-    this.svc.list(undefined, 0, 200).subscribe(page => {
+    this.svc.list({ page: 0, size: 200, sort: 'id,asc' }).subscribe(page => {
       this.totalBeneficios.set(page.totalElements);
       this.totalValor.set(page.content.reduce((s, b) => s + Number(b.valor || 0), 0));
       this.totalAtivos.set(page.content.filter(b => b.ativo).length);
@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
         .slice(0, 5));
     });
 
-    this.svc.transferencias(0, 5).subscribe(p => {
+    this.svc.transferencias({ page: 0, size: 5, sort: 'id,desc' }).subscribe(p => {
       this.ultimasTransf.set(p.content);
       this.loading.set(false);
     });

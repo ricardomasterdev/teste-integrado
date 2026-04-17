@@ -7,8 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { BeneficioService } from '../../core/services/beneficio.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { Beneficio } from '../../core/models/models';
 
 @Component({
@@ -78,7 +78,7 @@ export class TransferDialogComponent implements OnInit {
   private fb     = inject(FormBuilder);
   private svc    = inject(BeneficioService);
   private ref    = inject(MatDialogRef<TransferDialogComponent>);
-  private snack  = inject(MatSnackBar);
+  private notify = inject(NotificationService);
 
   beneficios: Beneficio[] = [];
   loading = signal(false);
@@ -95,7 +95,7 @@ export class TransferDialogComponent implements OnInit {
 
   ngOnInit() {
     if (!this.beneficios.length) {
-      this.svc.list(undefined, 0, 100).subscribe(p => this.beneficios = p.content);
+      this.svc.list({ page: 0, size: 100, sort: 'nome,asc' }).subscribe(p => this.beneficios = p.content);
     }
   }
 
@@ -103,7 +103,10 @@ export class TransferDialogComponent implements OnInit {
     if (this.form.invalid) return;
     const v = this.form.getRawValue();
     if (v.fromId === v.toId) {
-      this.snack.open('Origem e destino não podem ser iguais', 'Ok', { duration: 3500 });
+      this.notify.warning({
+        title: 'Origem e destino iguais',
+        message: 'A transferência precisa ser entre benefícios diferentes. Selecione contas de origem e destino distintas.'
+      });
       return;
     }
     this.loading.set(true);
@@ -111,7 +114,13 @@ export class TransferDialogComponent implements OnInit {
       .subscribe({
         next: () => {
           this.loading.set(false);
-          this.snack.open('Transferência concluída', 'Ok', { duration: 2500 });
+          const origem  = this.beneficios.find(b => b.id === v.fromId)?.nome ?? '#' + v.fromId;
+          const destino = this.beneficios.find(b => b.id === v.toId)?.nome   ?? '#' + v.toId;
+          this.notify.success({
+            title: 'Transferência concluída',
+            message: `${origem}  →  ${destino}`,
+            details: `Valor transferido: R$ ${Number(v.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+          });
           this.ref.close(true);
         },
         error: () => this.loading.set(false)

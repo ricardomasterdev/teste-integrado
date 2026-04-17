@@ -8,17 +8,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, Subject } from 'rxjs';
 import { BeneficioService } from '../../core/services/beneficio.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { Beneficio } from '../../core/models/models';
 import { BeneficioDialogComponent } from './beneficio-dialog.component';
 import { TransferDialogComponent } from './transfer-dialog.component';
-import { ConfirmDialogComponent } from './confirm-dialog.component';
 
 @Component({
   selector: 'app-beneficios-list',
@@ -35,7 +34,7 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
 export class BeneficiosListComponent implements AfterViewInit {
   private svc    = inject(BeneficioService);
   private dialog = inject(MatDialog);
-  private snack  = inject(MatSnackBar);
+  private notify = inject(NotificationService);
 
   displayed = ['id', 'nome', 'descricao', 'valor', 'ativo', 'acoes'];
   data = new MatTableDataSource<Beneficio>([]);
@@ -58,7 +57,12 @@ export class BeneficiosListComponent implements AfterViewInit {
 
   load() {
     this.loading.set(true);
-    this.svc.list(this.filter, this.page, this.size).subscribe({
+    this.svc.list({
+      page: this.page,
+      size: this.size,
+      sort: 'id,asc',
+      filters: { nome: this.filter || null }
+    }).subscribe({
       next: p => {
         this.data.data = p.content;
         this.total.set(p.totalElements);
@@ -82,13 +86,19 @@ export class BeneficiosListComponent implements AfterViewInit {
   }
 
   delete(b: Beneficio) {
-    this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Remover benefício',
-              message: `Confirma remoção de "${b.nome}"?` }
-    }).afterClosed().subscribe(ok => {
+    this.notify.confirm({
+      title: 'Remover benefício',
+      message: `Confirma remoção do benefício "${b.nome}" (ID #${b.id})?`,
+      details: 'Esta operação não pode ser desfeita.',
+      confirmText: 'Remover',
+      cancelText: 'Cancelar'
+    }).subscribe(ok => {
       if (!ok || !b.id) return;
       this.svc.delete(b.id).subscribe(() => {
-        this.snack.open('Benefício removido', 'Ok', { duration: 2500 });
+        this.notify.success({
+          title: 'Benefício removido',
+          message: `O benefício "${b.nome}" foi removido com sucesso.`
+        });
         this.load();
       });
     });

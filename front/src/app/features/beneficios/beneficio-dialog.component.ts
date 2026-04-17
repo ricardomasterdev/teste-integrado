@@ -7,8 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { BeneficioService } from '../../core/services/beneficio.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { Beneficio } from '../../core/models/models';
 
 @Component({
@@ -66,7 +66,7 @@ export class BeneficioDialogComponent {
   private fb     = inject(FormBuilder);
   private svc    = inject(BeneficioService);
   private ref    = inject(MatDialogRef<BeneficioDialogComponent>);
-  private snack  = inject(MatSnackBar);
+  private notify = inject(NotificationService);
 
   loading = signal(false);
   form = this.fb.nonNullable.group({
@@ -96,9 +96,12 @@ export class BeneficioDialogComponent {
       : this.svc.create(body);
 
     obs.subscribe({
-      next: () => {
+      next: (saved) => {
         this.loading.set(false);
-        this.snack.open('Salvo com sucesso', 'Ok', { duration: 2500 });
+        this.notify.success({
+          title: this.data?.id ? 'Benefício atualizado' : 'Benefício criado',
+          message: `"${saved.nome}" foi salvo com sucesso.`
+        });
         this.ref.close(true);
       },
       error: () => this.loading.set(false)

@@ -22,13 +22,7 @@ export interface Beneficio {
   updatedAt?: string;
 }
 
-export interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  totalPages: number;
-  number: number;
-  size: number;
-}
+export type { PageResponse } from './pagination';
 
 export interface TransferRequest {
   fromId: number;
@@ -39,7 +33,9 @@ export interface TransferRequest {
 export interface BeneficioTransferencia {
   id: number;
   beneficioOrigemId: number;
+  beneficioOrigemNome?: string;
   beneficioDestinoId: number;
+  beneficioDestinoNome?: string;
   valor: number;
   usuario: string;
   status: 'SUCCESS' | 'FAILED_INSUFFICIENT' | 'FAILED_LOCK' | 'FAILED' | 'FAILED_VALIDATION';

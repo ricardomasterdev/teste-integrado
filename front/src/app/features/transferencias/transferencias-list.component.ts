@@ -21,7 +21,7 @@ import { BeneficioTransferencia } from '../../core/models/models';
 export class TransferenciasListComponent implements OnInit {
   private svc = inject(BeneficioService);
 
-  displayed = ['id', 'fluxo', 'valor', 'usuario', 'status', 'mensagem', 'data'];
+  displayed = ['id', 'origem', 'destino', 'valor', 'usuario', 'status', 'mensagem', 'data'];
   rows = signal<BeneficioTransferencia[]>([]);
   total = signal(0);
   loading = signal(false);
@@ -32,7 +32,7 @@ export class TransferenciasListComponent implements OnInit {
 
   load() {
     this.loading.set(true);
-    this.svc.transferencias(this.page, this.size).subscribe({
+    this.svc.transferencias({ page: this.page, size: this.size, sort: 'id,desc' }).subscribe({
       next: p => { this.rows.set(p.content); this.total.set(p.totalElements); this.loading.set(false); },
       error: () => this.loading.set(false)
     });

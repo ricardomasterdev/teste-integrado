@@ -7,8 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
-  private snack = inject(MatSnackBar);
+  private notify = inject(NotificationService);
 
   loading = signal(false);
   hidePw  = signal(true);
@@ -39,12 +39,22 @@ export class LoginComponent {
     if (this.form.invalid) return;
     this.loading.set(true);
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => {
+      next: (r) => {
         this.loading.set(false);
-        this.snack.open('Bem-vindo!', 'Ok', { duration: 2000 });
-        this.router.navigate(['/app']);
+        this.notify.success({
+          title: `Bem-vindo, ${r.nome}!`,
+          message: 'Autenticação realizada com sucesso. Redirecionando para o sistema...'
+        });
+        setTimeout(() => this.router.navigate(['/app']), 600);
       },
-      error: () => this.loading.set(false)
+      error: (err) => {
+        this.loading.set(false);
+        this.notify.error({
+          title: 'Falha na autenticação',
+          message: err?.error?.message || 'Usuário ou senha inválidos.',
+          code: err?.error?.code || `HTTP ${err?.status}`
+        });
+      }
     });
   }
 }

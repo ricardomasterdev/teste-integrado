@@ -1,6 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.domain.BeneficioTransferencia;
+import com.example.backend.dto.BeneficioTransferenciaDto;
 import com.example.backend.repository.BeneficioTransferenciaRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,8 +21,11 @@ public class TransferenciaController {
     public TransferenciaController(BeneficioTransferenciaRepository repo) { this.repo = repo; }
 
     @GetMapping
-    @Operation(summary = "Lista as transferências realizadas (mais recentes primeiro)")
-    public Page<BeneficioTransferencia> list(@PageableDefault(size = 20) Pageable pageable) {
-        return repo.findAllByOrderByIdDesc(pageable);
+    @Operation(summary = "Lista as transferências com nomes de origem/destino")
+    public Page<BeneficioTransferenciaDto> list(
+            @PageableDefault(size = 20, sort = "id",
+                             direction = org.springframework.data.domain.Sort.Direction.DESC)
+            Pageable pageable) {
+        return repo.findPageWithNames(pageable);
     }
 }
