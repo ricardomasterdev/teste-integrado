@@ -1,0 +1,47 @@
+<mat-sidenav-container class="layout" autosize>
+  <mat-sidenav mode="side" opened class="sidenav">
+    <div class="brand">
+      <mat-icon>account_balance</mat-icon>
+      <div class="brand-text">
+        <strong>Teste Integrado</strong>
+        <small>Benefícios</small>
+      </div>
+    </div>
+
+    <mat-nav-list>
+      @for (item of menu; track item.path) {
+        <a mat-list-item [routerLink]="item.path" routerLinkActive="active">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary" class="topbar">
+      <span>Sistema de Gestão de Benefícios</span>
+      <span class="spacer"></span>
+
+      <button mat-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+        <span class="user-name">{{ auth.user()?.nome }}</span>
+        <mat-icon>expand_more</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <div class="menu-header">
+          <strong>{{ auth.user()?.nome }}</strong>
+          <small>{{ auth.user()?.role }}</small>
+        </div>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <main class="page">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

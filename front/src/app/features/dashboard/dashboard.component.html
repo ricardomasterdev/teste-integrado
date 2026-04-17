@@ -1,0 +1,83 @@
+<section class="dashboard">
+  <header class="page-header">
+    <h2>Dashboard</h2>
+    <p class="text-muted">Visão geral do sistema de benefícios</p>
+  </header>
+
+  <div class="kpis">
+    <mat-card class="kpi">
+      <div class="kpi-icon" style="background:#3949ab">
+        <mat-icon>card_giftcard</mat-icon>
+      </div>
+      <div>
+        <div class="kpi-label">Benefícios cadastrados</div>
+        <div class="kpi-value">{{ totalBeneficios() }}</div>
+      </div>
+    </mat-card>
+
+    <mat-card class="kpi">
+      <div class="kpi-icon" style="background:#16a34a">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <div>
+        <div class="kpi-label">Valor total</div>
+        <div class="kpi-value">{{ totalValor() | currency:'BRL' }}</div>
+      </div>
+    </mat-card>
+
+    <mat-card class="kpi">
+      <div class="kpi-icon" style="background:#0284c7">
+        <mat-icon>verified</mat-icon>
+      </div>
+      <div>
+        <div class="kpi-label">Ativos</div>
+        <div class="kpi-value">{{ totalAtivos() }}</div>
+      </div>
+    </mat-card>
+
+    <mat-card class="kpi">
+      <div class="kpi-icon" style="background:#9ca3af">
+        <mat-icon>block</mat-icon>
+      </div>
+      <div>
+        <div class="kpi-label">Inativos</div>
+        <div class="kpi-value">{{ totalInativos() }}</div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="grid-2">
+    <mat-card class="panel">
+      <h3>Top 5 Benefícios por valor</h3>
+      @if (topBeneficios().length === 0) {
+        <p class="text-muted">Nenhum benefício cadastrado ainda.</p>
+      }
+      @for (b of topBeneficios(); track b.id; let i = $index) {
+        <div class="rank-row">
+          <span class="rank">#{{ i + 1 }}</span>
+          <span class="name">{{ b.nome }}</span>
+          <span class="value">{{ b.valor | currency:'BRL' }}</span>
+        </div>
+      }
+    </mat-card>
+
+    <mat-card class="panel">
+      <h3>Últimas transferências</h3>
+      @if (ultimasTransf().length === 0) {
+        <p class="text-muted">Nenhuma transferência realizada.</p>
+      }
+      @for (t of ultimasTransf(); track t.id) {
+        <div class="transf-row">
+          <span class="flow">
+            #{{ t.beneficioOrigemId }} → #{{ t.beneficioDestinoId }}
+          </span>
+          <span class="value" [class.text-success]="t.status === 'SUCCESS'"
+                              [class.text-danger]="t.status !== 'SUCCESS'">
+            {{ t.valor | currency:'BRL' }}
+          </span>
+          <small class="text-muted">{{ t.createdAt | date:'short':'':'pt-BR' }}</small>
+        </div>
+      }
+    </mat-card>
+  </div>
+</section>

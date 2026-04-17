@@ -1,0 +1,39 @@
+# --------------- Geral ---------------
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+
+# --------------- IDE ---------------
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.claude/
+
+# --------------- Backend (Maven) ---------------
+target/
+build/
+*.jar
+*.war
+!**/mvnw.jar
+dependency-reduced-pom.xml
+
+# --------------- Frontend (Angular / Node) ---------------
+node_modules/
+dist/
+.angular/
+npm-debug.log
+yarn-error.log
+coverage/
+*.tsbuildinfo
+
+# --------------- OS ---------------
+ehthumbs.db
+
+# --------------- Project-specific ---------------
+backend.log
+backend.pid

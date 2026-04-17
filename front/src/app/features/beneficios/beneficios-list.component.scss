@@ -1,0 +1,21 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  h2 { margin: 0 0 4px; color: var(--ti-primary-dark); }
+  .actions { display: flex; gap: 12px; }
+}
+
+.search { min-width: 280px; }
+
+table {
+  width: 100%;
+  th.right, td.right { text-align: right; }
+  .mono { font-family: 'Roboto Mono', monospace; font-variant-numeric: tabular-nums; }
+}
+
+.no-data { text-align: center; padding: 24px; color: var(--ti-muted); }

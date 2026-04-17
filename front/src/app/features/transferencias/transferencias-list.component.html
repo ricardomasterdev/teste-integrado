@@ -1,0 +1,72 @@
+<section class="transferencias">
+  <header class="page-header">
+    <h2>Transferências</h2>
+    <p class="text-muted">Auditoria de todas as operações de transferência</p>
+  </header>
+
+  <div class="ti-card">
+    @if (loading()) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+    <table mat-table [dataSource]="rows()" class="full-width">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>#</th>
+        <td mat-cell *matCellDef="let t">{{ t.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fluxo">
+        <th mat-header-cell *matHeaderCellDef>Origem → Destino</th>
+        <td mat-cell *matCellDef="let t" class="mono">
+          #{{ t.beneficioOrigemId }} → #{{ t.beneficioDestinoId }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="valor">
+        <th mat-header-cell *matHeaderCellDef class="right">Valor</th>
+        <td mat-cell *matCellDef="let t" class="right mono">
+          {{ t.valor | currency:'BRL' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef>Usuário</th>
+        <td mat-cell *matCellDef="let t">{{ t.usuario }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let t">
+          <mat-chip [color]="chipColor(t.status)" selected>
+            {{ t.status }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="mensagem">
+        <th mat-header-cell *matHeaderCellDef>Mensagem</th>
+        <td mat-cell *matCellDef="let t" class="text-muted">{{ t.mensagem }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="data">
+        <th mat-header-cell *matHeaderCellDef>Data</th>
+        <td mat-cell *matCellDef="let t">{{ t.createdAt | date:'short':'':'pt-BR' }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayed"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayed;"></tr>
+
+      <tr *matNoDataRow>
+        <td class="no-data" [attr.colspan]="displayed.length">
+          Nenhuma transferência registrada ainda.
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator
+      [length]="total()"
+      [pageSize]="size"
+      [pageIndex]="page"
+      [pageSizeOptions]="[10,20,50,100]"
+      (page)="onPage($event)">
+    </mat-paginator>
+  </div>
+</section>
