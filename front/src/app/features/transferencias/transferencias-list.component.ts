@@ -67,6 +67,13 @@ export class TransferenciasListComponent implements OnInit {
     return status === 'SUCCESS' ? 'check_circle' : 'error';
   }
 
+  openTransfer() {
+    import('../beneficios/transfer-dialog.component').then(m => {
+      this.dialog.open(m.TransferDialogComponent, { width: '560px' })
+        .afterClosed().subscribe(ok => { if (ok) this.load(); });
+    });
+  }
+
   openDetails(t: BeneficioTransferencia) {
     this.dialog.open(DetailsDialogComponent, {
       width: '560px',

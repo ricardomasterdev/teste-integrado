@@ -2,50 +2,72 @@
   <app-page-header title="Painel" subtitle="Visão geral do sistema de benefícios"></app-page-header>
 
   <div class="kpis">
-    <mat-card class="kpi">
+    <mat-card class="kpi" tabindex="0" role="button"
+              (click)="goTo('/app/beneficios')"
+              (keydown.enter)="goTo('/app/beneficios')"
+              matTooltip="Ver todos os benefícios">
       <div class="kpi-icon" style="background:#3949ab">
         <mat-icon>card_giftcard</mat-icon>
       </div>
-      <div>
+      <div class="kpi-body">
         <div class="kpi-label">Benefícios cadastrados</div>
         <div class="kpi-value">{{ totalBeneficios() }}</div>
       </div>
+      <mat-icon class="kpi-arrow">chevron_right</mat-icon>
     </mat-card>
 
-    <mat-card class="kpi">
+    <mat-card class="kpi" tabindex="0" role="button"
+              (click)="goTo('/app/beneficios')"
+              (keydown.enter)="goTo('/app/beneficios')"
+              matTooltip="Ver benefícios e saldos">
       <div class="kpi-icon" style="background:#16a34a">
         <mat-icon>account_balance_wallet</mat-icon>
       </div>
-      <div>
+      <div class="kpi-body">
         <div class="kpi-label">Valor total</div>
         <div class="kpi-value">{{ totalValor() | currency:'BRL' }}</div>
       </div>
+      <mat-icon class="kpi-arrow">chevron_right</mat-icon>
     </mat-card>
 
-    <mat-card class="kpi">
+    <mat-card class="kpi" tabindex="0" role="button"
+              (click)="goTo('/app/beneficios')"
+              (keydown.enter)="goTo('/app/beneficios')"
+              matTooltip="Ver benefícios ativos">
       <div class="kpi-icon" style="background:#0284c7">
         <mat-icon>verified</mat-icon>
       </div>
-      <div>
+      <div class="kpi-body">
         <div class="kpi-label">Ativos</div>
         <div class="kpi-value">{{ totalAtivos() }}</div>
       </div>
+      <mat-icon class="kpi-arrow">chevron_right</mat-icon>
     </mat-card>
 
-    <mat-card class="kpi">
+    <mat-card class="kpi" tabindex="0" role="button"
+              (click)="goTo('/app/beneficios')"
+              (keydown.enter)="goTo('/app/beneficios')"
+              matTooltip="Ver benefícios inativos">
       <div class="kpi-icon" style="background:#9ca3af">
         <mat-icon>block</mat-icon>
       </div>
-      <div>
+      <div class="kpi-body">
         <div class="kpi-label">Inativos</div>
         <div class="kpi-value">{{ totalInativos() }}</div>
       </div>
+      <mat-icon class="kpi-arrow">chevron_right</mat-icon>
     </mat-card>
   </div>
 
   <div class="grid-2">
-    <mat-card class="panel">
-      <h3>Top 5 Benefícios por valor</h3>
+    <mat-card class="panel panel-clickable" tabindex="0" role="button"
+              (click)="goTo('/app/beneficios')"
+              (keydown.enter)="goTo('/app/beneficios')"
+              matTooltip="Ver todos os benefícios">
+      <div class="panel-head">
+        <h3>Top 5 Benefícios por valor</h3>
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
       @if (topBeneficios().length === 0) {
         <p class="text-muted">Nenhum benefício cadastrado ainda.</p>
       }
@@ -58,8 +80,14 @@
       }
     </mat-card>
 
-    <mat-card class="panel">
-      <h3>Últimas transferências</h3>
+    <mat-card class="panel panel-clickable" tabindex="0" role="button"
+              (click)="goTo('/app/transferencias')"
+              (keydown.enter)="goTo('/app/transferencias')"
+              matTooltip="Ver histórico de transferências">
+      <div class="panel-head">
+        <h3>Últimas transferências</h3>
+        <mat-icon>arrow_forward</mat-icon>
+      </div>
       @if (ultimasTransf().length === 0) {
         <p class="text-muted">Nenhuma transferência realizada.</p>
       }

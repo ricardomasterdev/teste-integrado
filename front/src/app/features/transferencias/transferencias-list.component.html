@@ -1,5 +1,9 @@
 <section class="transferencias">
-  <app-page-header title="Transferências" subtitle="Auditoria de todas as operações de transferência"></app-page-header>
+  <app-page-header title="Transferências" subtitle="Auditoria de todas as operações de transferência">
+    <button mat-raised-button color="primary" (click)="openTransfer()">
+      <mat-icon>compare_arrows</mat-icon> Nova transferência
+    </button>
+  </app-page-header>
 
   <div class="ti-card">
     @if (loading()) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }

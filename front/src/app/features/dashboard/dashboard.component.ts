@@ -1,8 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PageHeaderComponent } from '../../core/components/page-header.component';
 
 import { BeneficioService } from '../../core/services/beneficio.service';
@@ -11,12 +13,15 @@ import { Beneficio, BeneficioTransferencia } from '../../core/models/models';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, PageHeaderComponent],
+  imports: [CommonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule, PageHeaderComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
-  private svc = inject(BeneficioService);
+  private svc    = inject(BeneficioService);
+  private router = inject(Router);
+
+  goTo(path: string) { this.router.navigate([path]); }
 
   loading = signal(true);
   totalBeneficios = signal(0);
