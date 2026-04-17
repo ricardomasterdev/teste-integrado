@@ -13,7 +13,7 @@ SPA do Desafio Fullstack Integrado.
 ```bash
 npm install
 npm start                 # http://localhost:4200
-npm run build:prod        # gera dist/ pronto para IIS (base-href /teste-integrado/)
+npm run build:prod        # gera dist/ com base-href /teste-integrado/ pronto para publicação estática
 npm test                  # Karma + Jasmine
 ```
 
@@ -37,6 +37,6 @@ src/app/
 ## Configuração de ambientes
 
 - `src/environments/environment.ts` — dev (aponta para `http://localhost:8090/teste-integrado/api`)
-- `src/environments/environment.prod.ts` — produção (aponta para `/teste-integrado/api`, atrás do IIS)
+- `src/environments/environment.prod.ts` — produção (aponta para `/teste-integrado/api`, mesma origem via reverse proxy)
 
 O build de produção troca o arquivo via `fileReplacements` no `angular.json`.

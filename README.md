@@ -1,6 +1,6 @@
 # 🏗️ Desafio Fullstack Integrado — Solução Completa
 
-> **Autor:** Ricardo Master Dev · **Repositório:** [ricardomasterdev/teste-integrado](https://github.com/ricardomasterdev/teste-integrado) · **Ambiente:** [dev1.cdxsistemas.com.br/teste-integrado](https://dev1.cdxsistemas.com.br/teste-integrado)
+> **Autor:** Ricardo Master Dev · **Repositório:** [ricardomasterdev/teste-integrado](https://github.com/ricardomasterdev/teste-integrado)
 
 Solução fullstack em camadas entregue em resposta ao desafio técnico, contemplando:
 
@@ -22,9 +22,8 @@ Solução fullstack em camadas entregue em resposta ao desafio técnico, contemp
 7. [Banco de dados](#-banco-de-dados)
 8. [Segurança / Autenticação](#-segurança--autenticação-jwt)
 9. [Testes](#-testes)
-10. [Deploy em dev1 (IIS + PostgreSQL)](#-deploy-em-dev1cdxsistemascombrteste-integrado)
-11. [CI/CD](#-cicd)
-12. [Critérios de avaliação](#-mapeamento-com-os-critérios-de-avaliação)
+10. [CI/CD](#-cicd)
+11. [Como a solução atende cada critério](#-como-a-solução-atende-cada-critério-do-desafio)
 
 ---
 
@@ -50,7 +49,7 @@ teste-integrado/
 │   │       ├── Beneficio.java
 │   │       ├── BeneficioEjbService.java     ← BUG CORRIGIDO aqui
 │   │       └── TransferenciaException.java
-│   └── backend-module/                 ← Spring Boot 3 (runtime em dev1)
+│   └── backend-module/                 ← Spring Boot 3 (runtime)
 │       ├── pom.xml
 │       └── src/main/java/com/example/backend/
 │           ├── BackendApplication.java
@@ -92,7 +91,7 @@ teste-integrado/
 | **EJB** | Jakarta EE 10 · EJB 4.0 · JPA · JUnit 5 · Mockito |
 | **Backend** | Java 17 · Spring Boot 3.2 · Spring Data JPA · Spring Security 6 · Hibernate 6 · jjwt 0.12 · springdoc-openapi 2.5 · Bean Validation · Maven |
 | **Frontend** | Angular 17 · Angular Material 17 · TypeScript 5.4 · RxJS · Reactive Forms · Signals |
-| **DevOps** | GitHub Actions · IIS (reverse proxy) · Windows Service wrapper |
+| **DevOps** | GitHub Actions · Maven · npm |
 
 ---
 
@@ -100,20 +99,13 @@ teste-integrado/
 
 ```
 ┌────────────────────────────────────────────────────────────┐
-│   Angular 17 (SPA)          → / (IIS static files)          │
+│   Angular 17 (SPA)                                          │
 │   Login • Dashboard • CRUD • Transfer • Audit              │
 └───────────┬────────────────────────────────────────────────┘
             │ HTTPS + Bearer JWT
             ▼
 ┌────────────────────────────────────────────────────────────┐
-│   IIS Reverse Proxy         → /teste-integrado              │
-│     ├─ /api/*              proxy → backend:8090             │
-│     └─ /**                 serve  dist/ (Angular)           │
-└───────────┬────────────────────────────────────────────────┘
-            │
-            ▼
-┌────────────────────────────────────────────────────────────┐
-│   Spring Boot 3 Backend                                     │
+│   Spring Boot 3 Backend    (/teste-integrado/api)           │
 │   Controllers  →  Services (regra de negócio)               │
 │       │              │                                      │
 │       │              ├─ BeneficioService  (≡ EJB corrigido) │
@@ -178,7 +170,7 @@ Arquivo: [`back/ejb-module/src/main/java/com/example/ejb/BeneficioEjbService.jav
 - `validarParametros` e `validarEstado` isolam as regras; `Motivo` enum documenta todas as falhas possíveis.
 - Captura explícita de `OptimisticLockException` / `PessimisticLockException` com mensagem amigável.
 
-> A **mesma lógica** está re-implementada no `BeneficioService` do Spring Boot (runtime em dev1). Isso garante que o comportamento da produção seja idêntico ao EJB corrigido.
+> A **mesma lógica** está re-implementada no `BeneficioService` do Spring Boot (runtime da aplicação). Isso garante que o comportamento em produção seja idêntico ao EJB corrigido.
 
 ---
 
@@ -280,7 +272,7 @@ cd front
 npm install
 npm start                 # serve em http://localhost:4200
 # ou
-npm run build:prod        # gera dist/ pronto para IIS
+npm run build:prod        # gera dist/ pronto para publicação estática
 ```
 
 ---
@@ -299,18 +291,6 @@ Scripts em `back/db/`:
 ### `seed.sql`
 - 7 benefícios de exemplo (inclui ativo e inativo para testar regras).
 - Usuários: `teste / 123456` e `admin / 123456` — hash BCrypt cost 10.
-
-### Credenciais de produção (dev1)
-
-```
-Host:     177.53.148.179
-Porta:    5432
-Database: teste_integrado
-Usuário:  codex
-Senha:    Ric@7901
-```
-
-> Credenciais reutilizadas do banco PostgreSQL existente do ambiente CDX.
 
 ---
 
@@ -373,84 +353,6 @@ cd front && npm test
 
 ---
 
-## 🌐 Deploy em dev1.cdxsistemas.com.br/teste-integrado
-
-O servidor `dev1` roda **Windows Server 2022 + IIS 10** e é gerenciado via RDP. A publicação segue três passos:
-
-### 1) Backend (Windows Service)
-
-```powershell
-# 1. Copiar o JAR
-copy target\backend.jar C:\apps\teste-integrado\backend.jar
-
-# 2. Variáveis de ambiente (System Properties → Environment Variables)
-APP_JWT_SECRET         = "<32+ caracteres>"
-APP_JWT_EXPIRATION_MS  = 28800000
-DB_HOST                = 177.53.148.179
-DB_NAME                = teste_integrado
-DB_USER                = codex
-DB_PASSWORD            = Ric@7901
-SERVER_PORT            = 8090
-SPRING_PROFILES_ACTIVE = prod
-
-# 3. Instalar como serviço com NSSM
-nssm install TesteIntegradoBackend "C:\Program Files\Eclipse Adoptium\jdk-17.0.17.10-hotspot\bin\javaw.exe"
-nssm set TesteIntegradoBackend AppParameters "-jar C:\apps\teste-integrado\backend.jar"
-nssm set TesteIntegradoBackend AppDirectory  "C:\apps\teste-integrado"
-nssm set TesteIntegradoBackend Start          SERVICE_AUTO_START
-nssm start TesteIntegradoBackend
-```
-
-### 2) Frontend (arquivos estáticos)
-
-```powershell
-# Gerar e copiar
-cd front && npm run build:prod
-xcopy /E /Y dist\* C:\inetpub\wwwroot\teste-integrado\
-```
-
-### 3) IIS — URL Rewrite
-
-Criar aplicação `teste-integrado` sob o Site padrão e adicionar `web.config`:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-  <system.webServer>
-    <rewrite>
-      <rules>
-        <rule name="Proxy API" stopProcessing="true">
-          <match url="^api/(.*)" />
-          <action type="Rewrite" url="http://localhost:8090/teste-integrado/api/{R:1}" />
-          <serverVariables>
-            <set name="HTTP_X_FORWARDED_PROTO" value="https" />
-          </serverVariables>
-        </rule>
-        <rule name="Angular SPA fallback" stopProcessing="true">
-          <match url=".*" />
-          <conditions logicalGrouping="MatchAll">
-            <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-            <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-          </conditions>
-          <action type="Rewrite" url="/teste-integrado/index.html" />
-        </rule>
-      </rules>
-    </rewrite>
-    <staticContent>
-      <mimeMap fileExtension=".webmanifest" mimeType="application/manifest+json" />
-    </staticContent>
-  </system.webServer>
-</configuration>
-```
-
-Pré-requisitos do IIS:
-- `URL Rewrite 2.1` (instalado via Web Platform Installer)
-- `Application Request Routing 3.0` (ARR) + habilitar **"Enable proxy"** em Server Farms → ARR cache → Server Proxy Settings
-
-Resultado: `https://dev1.cdxsistemas.com.br/teste-integrado/` → Angular + `/teste-integrado/api/*` → backend Spring Boot.
-
----
-
 ## 🤖 CI/CD
 
 `.github/workflows/ci.yml` roda em todo push/PR nas branches `main`/`develop`:
@@ -458,7 +360,7 @@ Resultado: `https://dev1.cdxsistemas.com.br/teste-integrado/` → Angular + `/te
 1. **backend**: JDK 17 Temurin + cache Maven → `mvn test package` (EJB e backend) → upload do JAR como artifact.
 2. **frontend**: Node 20 + cache npm → `npm ci` → `npm run build:prod` → upload do `dist/`.
 
-Artifacts ficam disponíveis por 7 dias para download manual e podem ser encadeados com um job de deploy (não incluído — dev1 requer RDP).
+Artifacts ficam disponíveis por 7 dias para download e podem ser encadeados com um job de deploy conforme o ambiente alvo.
 
 ---
 
@@ -489,7 +391,7 @@ O arquivo [`back/ejb-module/src/main/java/com/example/ejb/BeneficioEjbService.ja
 - **Transação e rollback automático** com `@TransactionAttribute(REQUIRED)` + exceção marcada com `@ApplicationException(rollback = true)`. Captura explícita de `OptimisticLockException`/`PessimisticLockException` com mensagem amigável.
 - **Motivos tipados** no `TransferenciaException.Motivo` — cada falha possível tem um código rastreável.
 
-A mesma lógica foi replicada no `BeneficioService` do Spring Boot (runtime real em dev1) para que o comportamento do ambiente publicado seja idêntico ao EJB corrigido.
+A mesma lógica foi replicada no `BeneficioService` do Spring Boot (runtime real da aplicação) para que o comportamento do ambiente publicado seja idêntico ao EJB corrigido.
 
 ### CRUD de Benefícios e Transferência
 CRUD completo com paginação, ordenação e busca por nome:
@@ -519,7 +421,7 @@ Cobertura real de cenários críticos em **19 testes**:
 `mvn test` em ambos os módulos conclui com 0 falhas. O CI (`.github/workflows/ci.yml`) executa os dois builds automaticamente a cada push.
 
 ### Documentação
-- Este README com detalhamento técnico completo: stack, arquitetura, análise do bug, contratos REST, deploy em IIS, códigos de erro.
+- Este README com detalhamento técnico completo: stack, arquitetura, análise do bug, contratos REST, códigos de erro.
 - READMEs específicos em `back/ejb-module/README.md` e `back/backend-module/README.md`.
 - **Swagger / OpenAPI 3** disponível em `/teste-integrado/api/swagger-ui.html` com security scheme `bearerAuth`, tags por controller, descrição por operação e modelo de request/response.
 - Classes anotadas com `@Tag` e `@Operation` para tornar a doc navegável.

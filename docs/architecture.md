@@ -10,15 +10,7 @@
                         │ HTTPS + Bearer JWT
                         ▼
 ┌───────────────────────────────────────────────────────────────┐
-│         IIS 10 (dev1.cdxsistemas.com.br)                      │
-│  /teste-integrado/                                            │
-│    ├─ /api/*  ── URL Rewrite + ARR → http://localhost:8090/*  │
-│    └─ /**     ── arquivos estáticos  (dist/ Angular)          │
-└───────────────────────┬───────────────────────────────────────┘
-                        │
-                        ▼
-┌───────────────────────────────────────────────────────────────┐
-│             Spring Boot 3 Backend (Windows Service)           │
+│             Spring Boot 3 Backend                             │
 │                                                               │
 │  ┌─────────────┐   ┌──────────────┐   ┌────────────────────┐  │
 │  │ Controllers │ → │   Services   │ → │   Repositories     │  │
