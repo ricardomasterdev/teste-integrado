@@ -39,13 +39,9 @@ export class LoginComponent {
     if (this.form.invalid) return;
     this.loading.set(true);
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: (r) => {
+      next: () => {
         this.loading.set(false);
-        this.notify.success({
-          title: `Bem-vindo, ${r.nome}!`,
-          message: 'Autenticação realizada com sucesso. Redirecionando para o sistema...'
-        });
-        setTimeout(() => this.router.navigate(['/app']), 600);
+        this.router.navigate(['/app']);
       },
       error: (err) => {
         this.loading.set(false);
