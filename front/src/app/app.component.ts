@@ -18,15 +18,20 @@ export class AppComponent implements OnInit {
   private loader = inject(LoaderService);
 
   ngOnInit(): void {
-    // Pulso de loader em toda mudança de rota para feedback de navegação,
-    // mesmo quando a rota não dispara HTTP (ex: entrar no dashboard).
+    // Pulso de loader em mudança de rota — apenas dentro da área autenticada.
+    // A tela de login tem feedback próprio (barra de progresso no botão) e
+    // não aciona o overlay global, evitando travas visuais durante autenticação.
     this.router.events.subscribe(e => {
       if (e instanceof NavigationStart) {
-        this.loader.inc();
+        if (this.isAuthArea(e.url)) this.loader.inc();
       } else if (e instanceof NavigationEnd) {
-        // garante mínimo de 800ms de exibição via LoaderService
-        this.loader.dec();
+        if (this.isAuthArea(e.urlAfterRedirects)) this.loader.dec();
       }
     });
+  }
+
+  private isAuthArea(url: string): boolean {
+    // Tudo que começa com /app é área autenticada; login/raiz não ativam loader
+    return url.startsWith('/app');
   }
 }
